@@ -6,6 +6,7 @@ class Servicio():
 
     def to_json(self):
         return {
-            "id": self._servicio_id,
+            "id del servicio": self._servicio_id,
+            "id del usuario": self._usuario_id,
             "nombre": self._nombre
         }

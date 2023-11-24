@@ -2,7 +2,7 @@ from flask import Flask
 #from flask_cors import CORS
 
 app = Flask(__name__)
-#SCORS(app)
+#CORS(app)
 
 app.config['SECRET_KEY'] = 'app_123'
 
