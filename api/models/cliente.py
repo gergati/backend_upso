@@ -7,8 +7,8 @@ class Cliente():
         self._dni = row[4]
         self._email = row[5]
         self._telefono = row[6]
-        self._nacimiento = row[7]
         self._contraseña = row[8]
+        self._fechaNac = row[7]
 
     def to_json(self):
         return {
@@ -18,6 +18,6 @@ class Cliente():
             "dni": self._dni,
             "email": self._email,
             "telefono": self._telefono,
-            "nacimiento": self._nacimiento,
-            "contraseña": self._contraseña
+            "contraseña": self._contraseña,
+            "fechaNac": self._fechaNac,
         }

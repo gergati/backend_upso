@@ -26,27 +26,27 @@ CREATE TABLE Cliente (
     dni INT(8) NOT NULL,
     email VARCHAR(255) NOT NULL,
     telefono INT(12) NOT NULL,
-    nacimiento DATETIME NOT NULL,
     contraseña VARCHAR(255) NOT NULL,
+    fechaNac DATETIME NOT NULL,
     PRIMARY KEY (cliente_id),
     FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id)
 );
 
 INSERT INTO Cliente VALUES 
-(1,1,'Perez','Joaquin',34567564,'perez@gmail.com',2915107678,'2/9/1969', 'perez123'),
-(2,2,'Solis','Eduardo',12327523,'solis@gmail.com',2915107678,'11/3/1972','solis123'),
-(3,1,'Nieto','Jorge',34234809,'nieto@gmail.com',2915107678,'4/10/1972','nieto123'),
-(4,2,'Hernandez','Johanna', 34234809,'hernandez@gmail.com',2915107678,'4/3/1952','hernandez123'),
-(5,1,'Romero','Manuel Alberto',34567342,'romero@gmail.com',2915107678,'4/12/1969','romero123'),
-(6,2,'Garcia','Roxana',34345564,'garcia@gmail.com',2915107678,'4/4/1970','garcia123'),
-(7,1,'Castro','Alfredo',34565674,'castro@gmail.com',2915107678,'2/9/1980','castro123'),
-(8,2,'Peña','Verenice',34567589,'peña@gmail.com',2915107678,'17/3/1978','peña123'),
-(9,1,'Martinez','Evelyn',34556764,'martinez@gmail.com',2915107678,'14/8/1972','martinez123'),
-(10,2,'Siguenza','Eduardo',21467564,'siguenza@gmail.com',2915107678,'9/10/1975','siguenza123'),
-(11,1,'Duran','Martin',34562364,'duran@gmail.com',2915107678,'4/3/1972','duran123'),
-(12,2,'Perez','Jose',34563352,'perez@gmail.com',2915107678,'6/3/1972','perez123'),
-(13,1,'Marillan','Sandra',67557564,'marillan@gmail.com',2915107678,'4/3/1968','marillan123'),
-(14,2,'Cuestas','Maria',34567564,'cuestas@gmail.com',2915107678,'14/9/1972','cuestas123');
+(1,1,'Perez','Joaquin',34567564,'perez@gmail.com',2915107678, 'perez123','2/9/1969'),
+(2,2,'Solis','Eduardo',12327523,'solis@gmail.com',2915107678,'solis123','1972/11/03' ),
+(3,1,'Nieto','Jorge',34234809,'nieto@gmail.com',2915107678,'nieto123','1972/10/04'),
+(4,2,'Hernandez','Johanna', 34234809,'hernandez@gmail.com',2915107678,'hernandez123','1952/04/03',),
+(5,1,'Romero','Manuel Alberto',34567342,'romero@gmail.com',2915107678,'romero123','1969/12/04'),
+(6,2,'Garcia','Roxana',34345564,'garcia@gmail.com',2915107678,'garcia123','1970/04/04'),
+(7,1,'Castro','Alfredo',34565674,'castro@gmail.com',2915107678,'castro123','1980/09/02'),
+(8,2,'Peña','Verenice',34567589,'peña@gmail.com',2915107678,'peña123','1978/03/17'),
+(9,1,'Martinez','Evelyn',34556764,'martinez@gmail.com',2915107678,'martinez123','1972/08/14'),
+(10,2,'Siguenza','Eduardo',21467564,'siguenza@gmail.com',2915107678,'siguenza123','1975/10/09'),
+(11,1,'Duran','Martin',34562364,'duran@gmail.com',2915107678,'duran123','1972/03/04'),
+(12,2,'Perez','Jose',34563352,'perez@gmail.com',2915107678,'perez123','1972/06/03'),
+(13,1,'Marillan','Sandra',67557564,'marillan@gmail.com',2915107678,'marillan123','1968/04/03'),
+(14,2,'Cuestas','Maria',34567564,'cuestas@gmail.com',2915107678,'cuestas123','1972/09/14');
 
 
 -- Crear la tabla Producto

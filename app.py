@@ -33,15 +33,23 @@ def login():
     if request.method == 'POST':
         username = request.form['nombre']
         password = request.form['contraseña']
+        
 
         cur = mysql.cursor()
-        cur.execute("SELECT * FROM Usuario WHERE nombre = %s AND contraseña = %s", (username, password))
+        cur.execute("SELECT usuario_id FROM Usuario WHERE nombre = %s AND contraseña = %s", (username, password,))
         user_data = cur.fetchone()
+        print(user_data)
+
+
+        cur = mysql.cursor()
+        cur.execute('SELECT apellido, nombre, dni, email, telefono, fechaNac FROM Cliente WHERE usuario_id = {}'.format(user_data[0]))
+        data_client = cur.fetchall()
+        print(data_client)
 
         if user_data:
             # Usuario autenticado correctamente
             
-            return render_template('/dashboard.html', user_data=user_data)
+            return render_template('/dashboard.html', user_data=user_data, data_client=data_client)
         else:
             # Usuario no autenticado
             
@@ -49,41 +57,56 @@ def login():
 
     return render_template('auth/login.html')
 
-@app.route('/home')  
-def home():
-    return render_template('/home.html')
 
-# LLamar a los clientes
-@app.route('/clientes', methods=['GET'])
-def get_all_client():
+
+# LLamar a los clientes por su id
+@app.route('/clientes/<int:usuario_id>', methods=['GET'])
+def get_all_client_by_id(usuario_id):
     cur = mysql.cursor()
-    cur.execute('SELECT * FROM Cliente')
-    data = cur.fetchall()
-    print(cur.rowcount)
-    print(data)
-    personList = []
-    for row in data:
-        objPerson = Cliente(row)
-        personList.append(objPerson.to_json())
-    #Acceso a BD -> SELECT FROM
-    return jsonify(personList)
+    cur.execute('SELECT apellido, nombre, dni, email, telefono, fechaNac FROM Cliente WHERE usuario_id = {}'.format(usuario_id))
+    datas = cur.fetchall()
+    print(datas)
+
+    
+    return render_template('/clientes.html', datas=datas)
 
 # LLama a los productos
-@app.route('/productos', methods=['GET'])
+@app.route('/login', methods=['GET', 'POST'])
 def get_all_products():
-    cur = mysql.cursor()
-    cur.execute('SELECT * FROM Producto')
-    data = cur.fetchall()
-    print(cur.rowcount)
-    print(data)
-    personList = []
-    for row in data:
-        objPerson = Producto(row)
-        personList.append(objPerson.to_json())
-    #Acceso a BD -> SELECT FROM
-    return jsonify(personList)
+    if request.method == 'POST':
+        username = request.form['nombre']
+        password = request.form['contraseña']
 
+        cur = mysql.cursor()
+        cur.execute("SELECT usuario_id FROM Usuario WHERE nombre = %s AND contraseña = %s", (username, password,))
+        user_data = cur.fetchone()
 
+        if user_data:
+            # Usuario autenticado correctamente
+            user_id = user_data[0]
+
+            cur.execute("SELECT * FROM Cliente WHERE usuario_id = {}".format(user_id))
+            data_client = cur.fetchall()
+            print(data_client)
+
+            if data_client:
+                # Cliente encontrado
+                cur.execute("SELECT * FROM Producto WHERE cliente_id = {}".format(data_client))
+                productos = cur.fetchall()
+
+                product_list = []
+                for producto_row in productos:
+                    objProducto = Producto(producto_row)
+                    product_list.append(objProducto.to_json())
+
+                return jsonify(product_list)
+            else:
+                return jsonify({"error": "Usuario autenticado, pero no se encontró el cliente."})
+        else:
+            # Usuario no autenticado
+            return jsonify({"error": "Nombre de usuario o contraseña incorrectos"})
+
+    return render_template('auth/login.html')
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
