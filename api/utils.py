@@ -67,7 +67,3 @@ def user_resources(func):
         return func(*args, **kwargs)
     return decorated
 
-@app.route('/test/<int:id>')
-@token_required
-def test(id):
-    return jsonify({'message': 'Funcion Test'})

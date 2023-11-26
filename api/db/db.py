@@ -1,5 +1,6 @@
+#import app
+from app import app
 import mysql.connector
-from api import app
 
 
 app.config['MYSQL_HOST'] = 'localhost'
