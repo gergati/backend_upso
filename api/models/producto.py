@@ -15,5 +15,5 @@ class Producto():
             "marca": self._marca,
             "precio": self._precio,
             "cantidad": self._cantidad,
-            "descipcion del producto": self._descripcion 
+            "descripcion del producto": self._descripcion 
         }
