@@ -1,17 +1,16 @@
-#import app
-from app import app
+from api import app
 import mysql.connector
 
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'api_ventas_upso'
+""" app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'adminTotal'
 app.config['MYSQL_PASSWORD'] = 'upso123'
-app.config['MYSQL_DB'] = 'AdminTotal'
-
+app.config['MYSQL_DB'] = 'admintotal'
+ """
 
 mysql = mysql.connector.connect(
     host='localhost',
-    user='api_ventas_upso',
-    password='upso123',
-    database='AdminTotal'
+    user='NicoAdministraciones',
+    password='nico123',
+    database='nicoadministraciones'
 )
