@@ -10,8 +10,27 @@ from api.models.producto import Producto
 def get_all_products():
     cur = mysql.cursor()
     cur.execute('SELECT p.producto_id, p.nombreProd, p.marca, p.precio, p.cantidad, p.descripcion, u.usuario_id, u.nombre, c.cliente_id, c.nombre FROM Producto p JOIN Usuario u ON p.usuario_id = u.usuario_id JOIN Cliente c ON u.usuario_id = c.usuario_id'); 
-    datos_todos= cur.fetchall()
-    return jsonify(datos_todos)
+    data = cur.fetchall()
+    productosLista = []
+    for row in data:
+        producto = {
+            'producto_id': row[0],
+            'nombreProd': row[1],
+            'marca': row[2],
+            'precio': row[3],
+            'cantidad': row[4],
+            'descripcion': row[5],
+            'usuario': {
+                'usuario_id': row[6],
+                'nombre': row[7]
+            },
+            'cliente': {
+                'cliente_id': row[8],
+                'nombre': row[9]
+            }
+        }
+        productosLista.append(producto)
+    return jsonify(productosLista)
     
 
     
