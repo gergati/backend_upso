@@ -9,3 +9,4 @@ app.config['SECRET_KEY'] = 'app_123'
 import api.routes.usuario
 import api.routes.productos
 import api.routes.cliente
+import api.routes.facturaProducto

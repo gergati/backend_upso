@@ -58,7 +58,6 @@ def update_person(usuario_id):
         return jsonify({'Message': 'Email ya registrado'})
     
     else:
-        #UPDATE SET .... WHERE .....
         cur = mysql.cursor()
         cur.execute('UPDATE Usuario SET nombre = %s, apellido = %s, dni= %s, email = %s, telefono = %s, tipo = %s WHERE usuario_id = %s', (nombre, apellido, dni, email, telefono, tipo, usuario_id))
         mysql.commit()

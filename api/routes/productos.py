@@ -1,7 +1,6 @@
-from flask import jsonify, render_template, flash, request
+from flask import jsonify, request
 from api import app
 from api.db.db import mysql
-from api.models.cliente import Cliente
 from api.models.producto import Producto
 
 
@@ -37,18 +36,37 @@ def get_all_products():
 # CAMBIAR DATOS A TRAVES DE SU ID
 @app.route('/productos/<int:producto_id>', methods=['PUT'])
 def update_product(producto_id):
+    nombreProd = request.get_json()['nombreProd']
     marca = request.get_json()["marca"]
     precio = request.get_json()["precio"]
     cantidad = request.get_json()["cantidad"]
     descripcion = request.get_json()["descripcion"]
 
     cur = mysql.cursor()
-    cur.execute('UPDATE Producto SET marca = %s, precio = %s, cantidad = %s, descripcion = %s WHERE producto_id = %s', (marca, precio, cantidad, descripcion, producto_id))
+    cur.execute('UPDATE Producto SET nombreProd = %s, marca = %s, precio = %s, cantidad = %s, descripcion = %s WHERE producto_id = %s', (nombreProd,marca, precio, cantidad, descripcion, producto_id))
     mysql.commit()
-    return jsonify({'marca': marca, 'precio': precio, "cantidad": cantidad, "descripcion": descripcion})
+    return jsonify({'nombreProd': nombreProd,'marca': marca, 'precio': precio, "cantidad": cantidad, "descripcion": descripcion})
+
+
+# CREAR PRODUCTOS NUEVOS
+@app.route('/productos', methods=['POST'])
+def crear_producto():
+    usuario_id = request.get_json()['usuario_id']
+    nombreProd = request.get_json()['nombreProd']
+    marca = request.get_json()['marca']
+    precio = request.get_json()['precio']
+    cantidad = request.get_json()['cantidad']
+    descripcion = request.get_json()['descripcion']
+
+    cur = mysql.cursor()
+    cur.execute('INSERT INTO Producto (usuario_id, nombreProd, marca, precio, cantidad, descripcion) VALUES (%s,%s,%s,%s, %s, %s)', (usuario_id, nombreProd, marca, precio, cantidad, descripcion))
+    mysql.commit()
+    return jsonify({'usuario_id': usuario_id, 'nombreProd': nombreProd, 'marca': marca, 'precio': precio, 'cantidad': cantidad, "descripcion": descripcion })
+
+
 
 # ELIMINAR UN PRODUCTO POR ID
-@app.route('/products/<int:producto_id>', methods=['DELETE'])
+@app.route('/productos/<int:producto_id>', methods=['DELETE'])
 def remove_product(producto_id):
     cur = mysql.cursor()
     cur.execute('DELETE FROM Producto WHERE producto_id = {}'.format(producto_id))
