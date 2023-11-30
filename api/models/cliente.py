@@ -1,23 +1,26 @@
-class Cliente():
+from datetime import datetime
+
+class Cliente:
     def __init__(self, row):
-        self._cliente_id = row[0]
-        self._usuario_id = row[1]
-        self._nombre = row[2]
-        self._apellido = row[3]
-        self._dni = row[4]
-        self._email = row[5]
-        self._telefono = row[6]
-        self._contraseña = row[8]
-        self._fechaNac = row[7]
+        self.cliente_id = row[0]
+        self.usuario_id = row[1]
+        self.apellido = row[2]
+        self.nombre = row[3]
+        self.dni = row[4]
+        self.email = row[5]
+        self.telefono = row[6]
+        self.contraseña = row[7]
+        self.fechaNac = row[8]
 
     def to_json(self):
         return {
-            "id": self._cliente_id,
-            "nombre": self._nombre,
-            "apellido": self._apellido,
-            "dni": self._dni,
-            "email": self._email,
-            "telefono": self._telefono,
-            "contraseña": self._contraseña,
-            "fechaNac": self._fechaNac,
+            "cliente_id": self.cliente_id,
+            "usuario_id": self.usuario_id,
+            "apellido": self.apellido,
+            "nombre": self.nombre,
+            "dni": self.dni,
+            "email": self.email,
+            "telefono": self.telefono,
+            "contraseña": self.contraseña,
+            "fechaNac": self.fechaNac.strftime('%Y-%m-%d')  # Formatea la fecha como 'YYYY-MM-DD'
         }

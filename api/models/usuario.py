@@ -7,7 +7,7 @@ class Usuario():
         self._email = row[4]
         self._telefono = row[5]
         self._contraseña = row[6]
-        self._tipo = row[7]  #Empresa o persona
+        self._tipo = row[7]  # Monotributista o Responsable Inscripto
 
     def to_json(self):
         return {
@@ -18,5 +18,5 @@ class Usuario():
             "email": self._email,
             "telefono": self._telefono,
             "contraseña": self._contraseña,
-            "tipo": self._tipo
+            "categoriaMonotributo": self._tipo
         }

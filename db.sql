@@ -115,4 +115,3 @@ CREATE TABLE FacturaServicio (
 
 INSERT INTO FacturaServicio VALUES
 (1,1);
-
