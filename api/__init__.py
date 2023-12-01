@@ -10,3 +10,5 @@ import api.routes.usuario
 import api.routes.productos
 import api.routes.cliente
 import api.routes.facturaProducto
+import api.routes.facturaServicio
+import api.routes.servicio

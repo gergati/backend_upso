@@ -80,7 +80,15 @@ def update_cliente_by_id(cliente_id):
     cur = mysql.cursor()
     cur.execute('UPDATE Cliente SET nombre = %s, apellido = %s, dni = %s, email = %s, telefono = %s, contraseña = %s, fechaNac = %s WHERE cliente_id = %s', (nombre, apellido, dni, email, telefono, contraseña, fechaNac, cliente_id))
     mysql.commit()
-    return jsonify({'nombre': nombre, 'apellido': apellido, "dni": dni, "email": email, "telefono": telefono, "contraseña": contraseña, "fechaNac": fechaNac})
+    return jsonify({
+        'nombre': nombre, 
+        'apellido': apellido, 
+        'dni': dni, 
+        "email": email, 
+        "telefono": telefono, 
+        "contraseña": contraseña, 
+        "fechaNac": fechaNac
+        })
 
 
 # ELIMINAR UN CLIENTE POR SU ID

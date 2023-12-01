@@ -43,7 +43,7 @@ def crear_usuario():
 
 # CAMBIAR DATOS DE USUARIO SEGUN SU ID
 @app.route('/usuario/<int:usuario_id>', methods=['PUT'])
-def update_person(usuario_id):
+def actualizar_usuario(usuario_id):
     nombre = request.get_json()["nombre"]
     apellido = request.get_json()["apellido"]
     dni = request.get_json()["dni"]
@@ -66,7 +66,6 @@ def update_person(usuario_id):
 # ELIMINAR UN USUARIO SEGUN EL ID
 @app.route('/usuario/<int:usuario_id>', methods=['DELETE'])
 def eliminar_usuario_por_id(usuario_id):
-
     cur = mysql.cursor()
     cur.execute('SELECT usuario_id FROM Usuario WHERE usuario_id = {}'.format(usuario_id))
     row = cur.fetchone()
