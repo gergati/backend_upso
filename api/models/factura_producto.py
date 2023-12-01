@@ -6,7 +6,7 @@ class FacturaProducto():
     
     def to_json(self):
         return {
-            "id": self._factura_id,
+            "id": self._facturaProd_id,
             "id del producto": self._producto_id,
             "cantidad": self._usuario_id
         }

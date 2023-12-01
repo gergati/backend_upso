@@ -28,3 +28,33 @@ def factura_productos():
         }
         productosLista.append(factura)
     return jsonify(productosLista)
+
+
+# CREAR UNA NUEVA FACTURA DEL PRODUCTO
+@app.route('/facturaProd', methods=['POST'])
+def crear_factura():
+    producto_id = request.get_json()['producto_id']
+    usuario_id = request.get_json()['usuario_id']
+
+    cur = mysql.cursor()
+    cur.execute('INSERT INTO facturaproducto (producto_id, usuario_id) VALUES (%s, %s)', (producto_id, usuario_id))
+    mysql.commit()
+    return jsonify({'producto_id':producto_id, 'usuario_id': usuario_id})
+
+#CAMBIAR DATOS A TRAVES DE SU ID
+@app.route('/facturaProd/<int:facturaProd_id>', methods=['PUT'])
+def actualizar_facturaProd(facturaProd_id):
+    producto_id = request.get_json()['producto_id']
+    usuario_id = request.get_json()['usuario_id']
+    cur = mysql.cursor()
+    cur.execute('UPDATE facturaproducto SET producto_id = %s, usuario_id = %s WHERE facturaProd_id = %s', (producto_id, usuario_id, facturaProd_id))
+    mysql.commit()
+    return jsonify({'facturaProd_id': facturaProd_id, 'producto_id': producto_id, 'usuario_id': usuario_id})
+
+# ELIMINAR UNA FACTURA POR UN ID
+@app.route('/facturaProd/<int:facturaProd_id>', methods=['DELETE'])
+def eliminar_factura(facturaProd_id):
+    cur = mysql.cursor()
+    cur.execute('DELETE FROM facturaproducto WHERE facturaProd_id = {}'.format(facturaProd_id))
+    mysql.commit()
+    return ({'Factura del producto eliminado con id': facturaProd_id})

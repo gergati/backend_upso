@@ -6,7 +6,7 @@ from api.models.producto import Producto
 
 # LLAMAR A LOS PRODUCTOS
 @app.route('/productos', methods=['GET'])
-def get_all_products():
+def productos():
     cur = mysql.cursor()
     cur.execute('SELECT p.producto_id, p.nombreProd, p.marca, p.precio, p.cantidad, p.descripcion, u.usuario_id, u.nombre, c.cliente_id, c.nombre FROM Producto p JOIN Usuario u ON p.usuario_id = u.usuario_id JOIN Cliente c ON u.usuario_id = c.usuario_id'); 
     data = cur.fetchall()
@@ -35,7 +35,7 @@ def get_all_products():
     
 # CAMBIAR DATOS A TRAVES DE SU ID
 @app.route('/productos/<int:producto_id>', methods=['PUT'])
-def update_product(producto_id):
+def actualizar_productos(producto_id):
     nombreProd = request.get_json()['nombreProd']
     marca = request.get_json()["marca"]
     precio = request.get_json()["precio"]
@@ -50,7 +50,7 @@ def update_product(producto_id):
 
 # CREAR PRODUCTOS NUEVOS
 @app.route('/productos', methods=['POST'])
-def crear_producto():
+def crear_productos():
     usuario_id = request.get_json()['usuario_id']
     nombreProd = request.get_json()['nombreProd']
     marca = request.get_json()['marca']
@@ -67,7 +67,7 @@ def crear_producto():
 
 # ELIMINAR UN PRODUCTO POR ID
 @app.route('/productos/<int:producto_id>', methods=['DELETE'])
-def remove_product(producto_id):
+def eliminar_productos(producto_id):
     cur = mysql.cursor()
     cur.execute('DELETE FROM Producto WHERE producto_id = {}'.format(producto_id))
     mysql.commit()
