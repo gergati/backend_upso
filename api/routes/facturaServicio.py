@@ -6,10 +6,10 @@ from api.models.factura_servicio import FacturaServicio
 
 
 # TRAER TODAS LAS FACTURAS DEL SERVICIO
-@app.route('/facturaServicio', methods=['GET'])
-def factura_servicio():
+@app.route('/usuario/<int:usuario_id>/facturaServicio', methods=['GET'])
+def factura_servicio(usuario_id):
     cur = mysql.cursor()
-    cur.execute('SELECT f.facturaServicio_id, f.servicio_id, s.servicio_id, s.nombreServicio, s.hora, u.usuario_id, u.nombre, u.apellido, u.dni, u.email, u.telefono, u.tipo FROM FacturaServicio f JOIN Servicio s ON f.servicio_id = s.servicio_id JOIN Usuario u ON f.facturaServicio_id = u.usuario_id')
+    cur.execute('SELECT f.facturaServicio_id, f.servicio_id, s.servicio_id, s.nombreServicio, s.cliente_id s.hora, u.usuario_id, u.nombre, u.apellido, u.dni, u.email, u.telefono, u.tipo FROM FacturaServicio f JOIN Servicio s ON f.servicio_id = s.servicio_id JOIN Usuario u ON f.facturaServicio_id = u.usuario_id WHERE u.usuario_id = %s', (usuario_id,))
     data = cur.fetchall()
     productosLista = []
     for row in data:
@@ -19,21 +19,21 @@ def factura_servicio():
                 'servicio_id': row[1],
                 'usuario_id': row[2],
                 'nombreServicio': row[3],
-                'hora': str(row[4]),  # Convertir timedelta a string
+                'cliente': row[4],
+                'hora': str(row[5]),  # Convertir timedelta a string
             },
             'usuario': {
-                'usuario_id': row[5],
-                'nombre': row[6],
-                'apellido': row[7],
-                'dni': row[8],
-                'email': row[9],
-                'telefono': row[10],
-                'tipo': row[11],
+                'usuario_id': row[6],
+                'nombre': row[7],
+                'apellido': row[8],
+                'dni': row[9],
+                'email': row[10],
+                'telefono': row[11],
+                'tipo': row[12],
             },
         }
         productosLista.append(factura)
     return jsonify(productosLista)
-
 
 
 

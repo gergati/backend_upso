@@ -30,6 +30,7 @@ def get_client_by_id(usuario_id, cliente_id):
     cur = mysql.cursor()
     cur.execute('SELECT c.cliente_id, c.usuario_id, c.apellido, c.nombre, c.dni, c.email, c.telefono, c.contraseña, c.fechaNac, u.nombre, u.apellido, u.dni, u.email, u.telefono, u.contraseña, u.tipo FROM Cliente c JOIN Usuario u ON c.usuario_id = u.usuario_id WHERE c.cliente_id = %s AND u.usuario_id = %s', (cliente_id, usuario_id))
     data = cur.fetchone()
+    print(data)
     if data is not None:
         return jsonify({
             "cliente_id": data[0],

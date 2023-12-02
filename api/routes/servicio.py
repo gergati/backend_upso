@@ -3,12 +3,16 @@ from api import app
 from api.db.db import mysql
 from api.models.servicio import Servicio
 from datetime import datetime 
+from api.utils import user_resources, token_required
+
 
 # TRAER TODOS LOS SERVICIOS 
-@app.route('/servicios', methods=['GET'])
-def traer_servicios():
+@app.route('/usuario/<int:usuario_id>/servicios', methods=['GET'])
+@token_required
+@user_resources
+def traer_servicios(usuario_id):
     cur = mysql.cursor()
-    cur.execute('SELECT * fROM servicio')
+    cur.execute('SELECT * fROM servicio WHERE usuario_id = %s', (usuario_id,))
     data = cur.fetchall()
     mysql.commit()
     clientList = []
@@ -18,22 +22,29 @@ def traer_servicios():
     return jsonify(clientList)
 
 # TRAER UN SERVICIO POR ID
-@app.route('/servicios/<int:servicio_id>', methods=['GET'])
-def servicio_por_id(servicio_id):
+@app.route('/usuario/<int:usuario_id>/servicios/<int:servicio_id>', methods=['GET'])
+@token_required
+@user_resources
+def servicio_por_id(usuario_id,servicio_id):
     cur = mysql.cursor()
-    cur.execute('SELECT * FROM servicio WHERE servicio_id = {}'.format(servicio_id))
+    cur.execute('SELECT * FROM servicio WHERE servicio_id = %s AND usuario_id = %s',(servicio_id, usuario_id))
     data = cur.fetchone()
     mysql.commit()
-    return jsonify({
-        'Id del servicio': data[0],
-        'Id del usuario': data[1],
-        'Servicio realizado': data[2],
-        'fecha': data[3].strftime('%Y-%m-%d'),
-        'hora': str(data[4])
-        })
+    if data == None:
+        return jsonify({'No existe el servicio con el id': servicio_id})
+    else:
+        return jsonify({
+            'Id del servicio': data[0],
+            'Id del usuario': data[1],
+            'Servicio realizado': data[2],
+            'fecha': data[3].strftime('%Y-%m-%d'),
+            'hora': str(data[4])
+            })
 
 # CAMBIAR DATOS DE UN SERVICIO POR ID
 @app.route('/servicios/<int:servicio_id>', methods=['PUT'])
+@token_required
+@user_resources
 def cambiar_servicio_por_id(servicio_id):
     usuario_id = request.get_json()['usuario_id']
     nombreServicio = request.get_json()['nombreServicio']
@@ -71,10 +82,12 @@ def crear_servicios():
 
 
 # ELIMINAR UN SERVICIO POR ID
-@app.route('/servicios/<int:servicio_id>', methods=['DELETE'])
-def eliminar_servicio(servicio_id):
+@app.route('/usuario/<int_usuario_id>/servicios/<int:servicio_id>', methods=['DELETE'])
+@token_required
+@user_resources
+def eliminar_servicio(usuario_id,servicio_id):
     cur = mysql.cursor()
-    cur.execute('DELETE FROM Servicio WHERE servicio_id = %s', (servicio_id,))
+    cur.execute('DELETE FROM Servicio WHERE servicio_id = %s AND usuario_id = %s', (servicio_id,usuario_id))
     return jsonify({'Servicio eliminado con id': servicio_id})
 
 

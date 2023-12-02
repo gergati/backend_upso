@@ -79,11 +79,9 @@ def crear_factura():
 @token_required
 @user_resources
 def actualizar_facturaProd(usuario_id, facturaProd_id):
-    data = request.get_json()
+    data = request.get_json()['producto_id']
     if not data or 'producto_id' not in data:
         return jsonify({'error': 'Datos incompletos o incorrectos'}), 400
-
-    nuevo_producto_id = data['producto_id']
 
     cur = mysql.cursor()
     cur.execute('SELECT usuario_id FROM FacturaProducto WHERE facturaProd_id = %s', (facturaProd_id,))
@@ -92,16 +90,18 @@ def actualizar_facturaProd(usuario_id, facturaProd_id):
     if not factura or factura[0] != usuario_id:
         return jsonify({'error': 'La factura de producto no pertenece al usuario especificado'}), 404
 
-    cur.execute('UPDATE FacturaProducto SET producto_id = %s WHERE facturaProd_id = %s', (nuevo_producto_id, facturaProd_id))
+    cur.execute('UPDATE FacturaProducto SET producto_id = %s WHERE facturaProd_id = %s', (data, facturaProd_id))
     mysql.commit()
 
-    return jsonify({'facturaProd_id': facturaProd_id, 'nuevo_producto_id': nuevo_producto_id, 'usuario_id': usuario_id})
+    return jsonify({'facturaProd_id': facturaProd_id, 'nuevo_producto_id': data, 'usuario_id': usuario_id})
 
 
 # ELIMINAR UNA FACTURA POR UN ID
 @app.route('/usuario/<int:usuario_id>/facturaProd/<int:facturaProd_id>', methods=['DELETE'])
-def eliminar_factura(facturaProd_id):
+@token_required
+@user_resources
+def eliminar_factura(usuario_id,facturaProd_id):
     cur = mysql.cursor()
-    cur.execute('DELETE FROM facturaproducto WHERE facturaProd_id = {}'.format(facturaProd_id))
+    cur.execute('DELETE FROM facturaproducto WHERE facturaProd_id = %s AND usuario_id = %s', (facturaProd_id, usuario_id))
     mysql.commit()
     return ({'Factura del producto eliminado con id': facturaProd_id})
