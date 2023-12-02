@@ -1,5 +1,7 @@
 from flask import jsonify, request
 from api import app
+import jwt
+import datetime
 from api.db.db import mysql
 from api.models.usuario import Usuario
 
@@ -7,15 +9,21 @@ from api.models.usuario import Usuario
 # LLAMAR A TODOS LOS USUARIOS
 @app.route('/', methods=['GET'])
 def usuario():
+    auth = request.authorization
+
+    if not auth or not auth.username or not auth.password:
+        return jsonify({'Message': 'No autorizado'}), 401 
     cur = mysql.cursor()
-    cur.execute('SELECT * FROM Usuario')
-    data_usuario = cur.fetchall()
-    usuarioLista = []
-    for row in data_usuario:
-        objectUsuario = Usuario(row)
-        usuarioLista.append(objectUsuario.to_json())
-        # Usuario autenticado correctamente
-    return jsonify(usuarioLista)
+    cur.execute('SELECT * FROM Usuario WHERE nombre = %s AND contraseña = %s', (auth.username, auth.password))
+    data_usuario = cur.fetchone()
+    if not data_usuario:
+        return jsonify({'Message': 'No autorizado'}), 401
+    
+    token = jwt.encode({
+        'id': data_usuario[0],
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=100)
+    }, app.config['SECRET_KEY'])
+    return jsonify({'token': token, 'nombre': auth.username, 'id': data_usuario[0]})
 
 # CREAR NUEVOS USUARIOS
 @app.route('/usuario', methods=['POST'])

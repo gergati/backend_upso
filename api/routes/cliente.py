@@ -1,7 +1,7 @@
 from api import app
 from api.db.db import mysql
 from flask import request, jsonify
-from datetime import datetime
+import datetime
 from api.models.cliente import Cliente
 
 
