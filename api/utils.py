@@ -31,7 +31,6 @@ def token_required(func):
                 return jsonify({'Message': 'Error en el token_id'})
         
         except Exception as e:
-            print(e)
             return jsonify({'Message': str(e)}),401
 
         return func(*args, **kwargs)
@@ -40,17 +39,12 @@ def token_required(func):
 def client_resource(func):
     @wraps(func)
     def decorated(*args, **kwargs):
-        print('Argumentos en client_resource: ', kwargs)
-        id_client = kwargs['id_client'] 
+        cliente_id = kwargs['cliente_id'] 
         cur = mysql.cursor()
-        cur.execute('SELECT id_user FROM client WHERE id = {0}'.format(id_client))
+        cur.execute('SELECT cliente_id FROM cliente WHERE cliente_id = {0}'.format(cliente_id))
         data = cur.fetchone()
-        if data:
-            id_prop = data[0]
-            user_id = request.headers['user-id']
-            if int(id_prop) != int(user_id):
-                return jsonify({'Message': 'No tienes permiso para acceder a este recurso'})
-
+        if data is None:
+            return jsonify({'Message': 'Cliente no encontrado'}), 404
         return func(*args, **kwargs)
     return decorated
 
@@ -58,16 +52,11 @@ def client_resource(func):
 def user_resources(func):
     @wraps(func)
     def decorated(*args, **kwargs):
-        print('Argumentos en client_resource: ', kwargs)
-        id_user_route = kwargs['id_user'] 
+        id_user_route = kwargs['usuario_id'] 
         user_id = request.headers['user-id']
         if int(id_user_route) != int(user_id):
-            return jsonify({'Message': 'No tienes permisos par acceder a este recurso'}),401
+            return jsonify({'Message': 'No tienes permisos par acceder a este RECURSO'}),401
             
         return func(*args, **kwargs)
     return decorated
 
-@app.route('/test/<int:id>')
-@token_required
-def test(id):
-    return jsonify({'message': 'Funcion Test'})

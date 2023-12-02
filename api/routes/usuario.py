@@ -3,11 +3,12 @@ from api import app
 import jwt
 import datetime
 from api.db.db import mysql
-from api.models.usuario import Usuario
+from api.utils import token_required
 
 
-# LLAMAR A TODOS LOS USUARIOS
-@app.route('/', methods=['GET'])
+
+# HACER LOGIN CON UN USUARIO
+@app.route('/login', methods=['GET'])
 def usuario():
     auth = request.authorization
 
@@ -23,7 +24,20 @@ def usuario():
         'id': data_usuario[0],
         'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=100)
     }, app.config['SECRET_KEY'])
-    return jsonify({'token': token, 'nombre': auth.username, 'id': data_usuario[0]})
+    return jsonify({'token': token, 'nombre': auth.username, 'usuario_id': data_usuario[0]})
+
+
+# TRAER USUARIOS SEGUN EL ID
+@app.route('/usuario/<int:usuario_id>', methods=['GET'])
+@token_required
+def traer_usuarios_por_id(usuario_id):
+    cur = mysql.cursor()
+    cur.execute('SELECT * FROM Usuario WHERE usuario_id = %s', (usuario_id,))
+    data = cur.fetchall()
+    return jsonify({
+        'usuario': data
+    })
+
 
 # CREAR NUEVOS USUARIOS
 @app.route('/usuario', methods=['POST'])
@@ -51,6 +65,7 @@ def crear_usuario():
 
 # CAMBIAR DATOS DE USUARIO SEGUN SU ID
 @app.route('/usuario/<int:usuario_id>', methods=['PUT'])
+@token_required
 def actualizar_usuario(usuario_id):
     nombre = request.get_json()["nombre"]
     apellido = request.get_json()["apellido"]
@@ -73,15 +88,13 @@ def actualizar_usuario(usuario_id):
 
 # ELIMINAR UN USUARIO SEGUN EL ID
 @app.route('/usuario/<int:usuario_id>', methods=['DELETE'])
+@token_required
 def eliminar_usuario_por_id(usuario_id):
     cur = mysql.cursor()
     cur.execute('SELECT usuario_id FROM Usuario WHERE usuario_id = {}'.format(usuario_id))
     row = cur.fetchone()
-    
-
     if row == None:
         return jsonify({'No existe el usuario con id': usuario_id})
-
     else:
         cur = mysql.cursor()
         cur.execute("DELETE FROM Usuario WHERE usuario_id = {}".format(usuario_id))

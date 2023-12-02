@@ -93,14 +93,16 @@ INSERT INTO FacturaProducto VALUES
 CREATE TABLE Servicio (
     servicio_id INT NOT NULL AUTO_INCREMENT,
     usuario_id INT NOT NULL,
+    cliente_id INT NOT NULL,
     nombreServicio VARCHAR(255) NOT NULL,
     fecha DATE NOT NULL,
     hora TIME NOT NULL,
     PRIMARY KEY (servicio_id),
-    FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id)
+    FOREIGN KEY (usuario_id) REFERENCES Usuario(usuario_id),
+    FOREIGN KEY (cliente_id) REFERENCES Cliente(cliente_id)
 );
 INSERT INTO Servicio VALUES
-(1,3,'Pintura total de la casa', '2022-11-29', '13:25:07'),
+(1,3,'Pintura total de la casa', '2022-11-29', '13:25:07',),
 (2,3,'Cambio memoria ram 8gb', '2023-10-09', '17:15:07'),
 (3,3,'Corte de pasto', '2018-07-22', '10:25:07'),
 (4,3,'Limpieza de pileta', '2023-04-12', '09:00:00');

@@ -1,15 +1,18 @@
 from api import app
 from api.db.db import mysql
 from flask import request, jsonify
+from api.utils import token_required, user_resources, client_resource
 import datetime
 from api.models.cliente import Cliente
 
 
 # TRAER TODOS LOS CLIENTES
-@app.route('/clientes', methods=['GET'])
-def client():
+@app.route('/usuario/<int:usuario_id>/clientes', methods=['GET'])
+@token_required
+@user_resources
+def client(usuario_id):
     cur = mysql.cursor()
-    cur.execute("SELECT * FROM Cliente")
+    cur.execute("SELECT * FROM Cliente WHERE usuario_id = %s", (usuario_id,))
     user_data = cur.fetchall()
     clientList = []
     for row in user_data:
@@ -19,15 +22,15 @@ def client():
 
 
 # BUSCAR CLIENTES POR ID
-@app.route('/clientes/<int:cliente_id>', methods=['GET'])
-def get_client_by_id(cliente_id):
+@app.route('/usuario/<int:usuario_id>/clientes/<int:cliente_id>', methods=['GET'])
+@token_required
+@user_resources
+@client_resource
+def get_client_by_id(usuario_id, cliente_id):
     cur = mysql.cursor()
-    cur.execute('SELECT * FROM Cliente WHERE cliente_id = {}'.format(cliente_id))
+    cur.execute('SELECT c.cliente_id, c.usuario_id, c.apellido, c.nombre, c.dni, c.email, c.telefono, c.contraseña, c.fechaNac, u.nombre, u.apellido, u.dni, u.email, u.telefono, u.contraseña, u.tipo FROM Cliente c JOIN Usuario u ON c.usuario_id = u.usuario_id WHERE c.cliente_id = %s AND u.usuario_id = %s', (cliente_id, usuario_id))
     data = cur.fetchone()
-
-    if data == None:
-        return jsonify({'No existe el cliente con id': cliente_id})
-    else:
+    if data is not None:
         return jsonify({
             "cliente_id": data[0],
             "usuario_id": data[1],
@@ -39,6 +42,8 @@ def get_client_by_id(cliente_id):
             "contraseña": data[7],
             "fechaNac": data[8].strftime('%Y-%m-%d')
         })
+    else:
+        return jsonify({'Message': 'Cliente no encontrado'}), 404 
 
 # CREAR NUEVOS USUARIOS
 @app.route('/clientes', methods=['POST'])
@@ -67,7 +72,10 @@ def crear_clientes():
 
 
 # CAMBIAR DATOS DEL CLIENTE POR ID
-@app.route('/clientes/<int:cliente_id>', methods=['PUT'])
+@app.route('/usuario/<int:usuario_id>/clientes/<int:cliente_id>', methods=['PUT'])
+@token_required
+@user_resources
+@client_resource
 def update_cliente_by_id(cliente_id):
     apellido = request.get_json()["apellido"]
     nombre = request.get_json()["nombre"]
@@ -92,7 +100,10 @@ def update_cliente_by_id(cliente_id):
 
 
 # ELIMINAR UN CLIENTE POR SU ID
-@app.route('/clientes/<int:cliente_id>', methods=['DELETE'])
+@app.route('/usuario/<int:usuario_id>/clientes/<int:cliente_id>', methods=['DELETE'])
+@token_required
+@user_resources
+@client_resource
 def eliminar_cliente_por_id(cliente_id):
     cur = mysql.cursor()
     cur.execute('SELECT cliente_id FROM Cliente WHERE cliente_id = {}'.format(cliente_id))
