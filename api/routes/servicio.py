@@ -42,7 +42,7 @@ def servicio_por_id(usuario_id,servicio_id):
             })
 
 # CAMBIAR DATOS DE UN SERVICIO POR ID
-@app.route('/servicios/<int:servicio_id>', methods=['PUT'])
+@app.route('/usuario/int:usuario_id/servicios/<int:servicio_id>', methods=['PUT'])
 @token_required
 @user_resources
 def cambiar_servicio_por_id(servicio_id):

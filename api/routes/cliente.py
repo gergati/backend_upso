@@ -77,7 +77,12 @@ def crear_clientes():
 @token_required
 @user_resources
 @client_resource
-def update_cliente_by_id(cliente_id):
+def update_cliente_by_id(usuario_id, cliente_id):
+    data = request.get_json()
+
+    if not data or 'apellido' not in data or 'nombre' not in data or 'dni' not in data or 'email' not in data or 'telefono' not in data or 'contraseña' not in data or 'fechaNac' not in data:
+        return jsonify({'error': 'Datos incompletos o incorrectos'}), 400
+
     apellido = request.get_json()["apellido"]
     nombre = request.get_json()["nombre"]
     dni = request.get_json()["dni"]
@@ -85,6 +90,14 @@ def update_cliente_by_id(cliente_id):
     telefono = request.get_json()['telefono']
     contraseña = request.get_json()['contraseña']
     fechaNac = request.get_json()['fechaNac']
+
+
+    cur = mysql.cursor()
+    cur.execute('SELECT usuario_id FROM Cliente WHERE cliente_id = %s', (cliente_id,))
+    cliente = cur.fetchone()
+
+    if not cliente or cliente[0] != usuario_id:
+        return jsonify({'Message': 'El producto no pertenece al usuario especificado'}), 404
 
     cur = mysql.cursor()
     cur.execute('UPDATE Cliente SET nombre = %s, apellido = %s, dni = %s, email = %s, telefono = %s, contraseña = %s, fechaNac = %s WHERE cliente_id = %s', (nombre, apellido, dni, email, telefono, contraseña, fechaNac, cliente_id))
@@ -98,6 +111,7 @@ def update_cliente_by_id(cliente_id):
         "contraseña": contraseña, 
         "fechaNac": fechaNac
         })
+      
 
 
 # ELIMINAR UN CLIENTE POR SU ID
@@ -105,7 +119,7 @@ def update_cliente_by_id(cliente_id):
 @token_required
 @user_resources
 @client_resource
-def eliminar_cliente_por_id(cliente_id):
+def eliminar_cliente_por_id(usuario_id,cliente_id):
     cur = mysql.cursor()
     cur.execute('SELECT cliente_id FROM Cliente WHERE cliente_id = {}'.format(cliente_id))
     row = cur.fetchone()
@@ -115,6 +129,6 @@ def eliminar_cliente_por_id(cliente_id):
 
     else:
         cur = mysql.cursor()
-        cur.execute("DELETE FROM Cliente WHERE cliente_id = {}".format(cliente_id))
+        cur.execute("DELETE FROM Cliente WHERE cliente_id = %s AND usuario_id = %s",(cliente_id, usuario_id))
         mysql.commit()
         return jsonify({'Eliminamos el cliente con el id':  cliente_id})
