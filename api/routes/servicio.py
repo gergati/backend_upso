@@ -42,10 +42,10 @@ def servicio_por_id(usuario_id,servicio_id):
             })
 
 # CAMBIAR DATOS DE UN SERVICIO POR ID
-@app.route('/usuario/int:usuario_id/servicios/<int:servicio_id>', methods=['PUT'])
+@app.route('/usuario/<int:usuario_id>/servicios/<int:servicio_id>', methods=['PUT'])
 @token_required
 @user_resources
-def cambiar_servicio_por_id(servicio_id):
+def cambiar_servicio_por_id(usuario_id, servicio_id):
     usuario_id = request.get_json()['usuario_id']
     nombreServicio = request.get_json()['nombreServicio']
     fecha = request.get_json()['fecha']
@@ -82,12 +82,13 @@ def crear_servicios():
 
 
 # ELIMINAR UN SERVICIO POR ID
-@app.route('/usuario/<int_usuario_id>/servicios/<int:servicio_id>', methods=['DELETE'])
+@app.route('/usuario/<int:usuario_id>/servicios/<int:servicio_id>', methods=['DELETE'])
 @token_required
 @user_resources
 def eliminar_servicio(usuario_id,servicio_id):
     cur = mysql.cursor()
     cur.execute('DELETE FROM Servicio WHERE servicio_id = %s AND usuario_id = %s', (servicio_id,usuario_id))
+    mysql.commit()
     return jsonify({'Servicio eliminado con id': servicio_id})
 
 

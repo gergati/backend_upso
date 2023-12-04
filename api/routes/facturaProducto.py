@@ -79,21 +79,33 @@ def crear_factura():
 @token_required
 @user_resources
 def actualizar_facturaProd(usuario_id, facturaProd_id):
-    data = request.get_json()['producto_id']
-    if not data or 'producto_id' not in data:
+
+    data = request.get_json()
+
+    if not data or 'facturaProd_id' not in data or 'producto_id' not in data or 'usuario_id' not in data:
         return jsonify({'error': 'Datos incompletos o incorrectos'}), 400
+
+    facturaProd_id = request.get_json()["facturaProd_id"]
+    producto_id = request.get_json()["producto_id"]
+    usuario_id = request.get_json()["usuario_id"]
+    
 
     cur = mysql.cursor()
     cur.execute('SELECT usuario_id FROM FacturaProducto WHERE facturaProd_id = %s', (facturaProd_id,))
-    factura = cur.fetchone()
+    producto = cur.fetchone()
 
-    if not factura or factura[0] != usuario_id:
-        return jsonify({'error': 'La factura de producto no pertenece al usuario especificado'}), 404
+    if not producto or producto[0] != usuario_id:
+        return jsonify({'Message': 'El producto no pertenece al usuario especificado'}), 404
 
-    cur.execute('UPDATE FacturaProducto SET producto_id = %s WHERE facturaProd_id = %s', (data, facturaProd_id))
+    cur = mysql.cursor()
+    cur.execute('UPDATE FacturaProducto SET facturaProd_id = %s, producto_id = %s, usuario_id = %s WHERE facturaProd_id = %s', (facturaProd_id, producto_id, usuario_id, facturaProd_id))
     mysql.commit()
-
-    return jsonify({'facturaProd_id': facturaProd_id, 'nuevo_producto_id': data, 'usuario_id': usuario_id})
+    return jsonify({
+        'facturaProd_id': facturaProd_id, 
+        'producto_id': producto_id,
+        'usuario_id': usuario_id, 
+        })
+      
 
 
 # ELIMINAR UNA FACTURA POR UN ID
